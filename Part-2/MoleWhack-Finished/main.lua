@@ -5,18 +5,9 @@
 -----------------------------------------------------------------------------------------
 
 -- Your code here
-
---[[
-local greenBackground=display.newImageRect("images/bg_green.png",1024,768)
-greenBackground.x=display.contentCenterX
-greenBackground.y=display.contentCenterY
-]]--
-
-
-    local myMole=display.newImageRect("images/mole_1.png",178,200)
-    myMole.x=display.contentCenterX
-	myMole.y=display.contentCenterY
-
+    local MoleGenerator=require("MoleGenerator")
+	local myMole=MoleGenerator.newMole()
+    
     local grassUpper=display.newImageRect("images/grass_upper.png",1024,384)
     grassUpper.x=display.contentCenterX
     grassUpper:setReferencePoint(display.TopCenterReferencePoint)
@@ -26,11 +17,11 @@ greenBackground.y=display.contentCenterY
     grassLower.x=display.contentCenterX
     grassLower:setReferencePoint(display.BottomCenterReferencePoint)
     grassLower.y=display.contentHeight
-    
+
     grassUpper:toBack()
-    myMole:toFront()
+    --myMole:toFront()
     grassLower:toFront()
-    
+
     local bgDirt=display.newImageRect("images/bg_dirt.png",1024,768)
     bgDirt.x=display.contentCenterX
     bgDirt.y=display.contentCenterY

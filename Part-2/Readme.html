@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generated-by" content="Markdown PRO, http://markdownpro.com"/>
+<title></title>
+</head>
+<body>
+<h1>Creating a Mole Whack Game with CoronaSDK - Part 2</h1>
+
+<p>This is part 2 of a multi-part tutorial series.  For the first part, visit: <a href="http://www.appliedclub.org/blog/2013/01/23/creating-a-mole-whacking-game-with-coronasdk/">Creating a Mole Whacking Game with CoronaSDK – Part 1</a>.  In this tutorial, we will learn how to move our Mole in the game and also a little about Object Oriented Programming (OOP).  If this sounds scary, don&#39;t be scared.  This is just a fancy way of breaking different parts of a program into smaller parts so they can be re-used.  Let&#39;s begin...</p>
+
+<p>This sample project uses the <a href="http://www.vickiwenderlich.com/2011/05/game-pack-mole-whack/">Mole Whack artwork</a> provided <a href="http://www.vickiwenderlich.com">Vicki Wenderlich</a>.</p>
+
+<ol>
+<li><p>Download the starter project from the <a href="http://www.appliedclub.org/projects/">APPlied Club projects</a> page.  Unzip the project.</p></li>
+<li><p>Open the Corona Simulator and open the project in the <strong>Part 2</strong> folder.  Then open the <code>main.lua</code> file in <strong>Notepad++</strong> or <strong>TextWrangler</strong></p></li>
+<li><p>We are going to move our Mole character to it&#39;s own file so we can separate all of the code related to the mole.  This will help us in the future to find any changes we need to make to the mole.</p></li>
+<li><p>Create a new file called &quot;MoleGenerator.lua&quot; in the same folder as the main.lua file for MoleWhack.  This is going to be a text file but instead of having the .txt extension, it should have the .lua extension.  </p></li>
+<li><p>Now open up main.lua and remove the lines that created the &quot;myMole&quot; object.  <strong>Remove this:</strong></p>
+
+<pre><code>local myMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+myMole.x=display.contentCenterX
+myMole.y=display.contentCenterY
+</code></pre></li>
+<li><p>For the time being, go down and find the following line and comment it out (that means add -- to the beginning of the line):</p>
+
+<pre><code>myMole:toFront()
+</code></pre></li>
+<li><p>Your main.lua should now look like this:</p>
+
+<pre><code>-----------------------------------------------------------------------------------------
+--
+-- main.lua
+--
+-----------------------------------------------------------------------------------------
+
+-- Your code here
+
+local grassUpper=display.newImageRect(&quot;images/grass_upper.png&quot;,1024,384)
+grassUpper.x=display.contentCenterX
+grassUpper:setReferencePoint(display.TopCenterReferencePoint)
+grassUpper.y=0
+
+local grassLower=display.newImageRect(&quot;images/grass_lower.png&quot;,1024,384)
+grassLower.x=display.contentCenterX
+grassLower:setReferencePoint(display.BottomCenterReferencePoint)
+grassLower.y=display.contentHeight
+
+grassUpper:toBack()
+--myMole:toFront()
+grassLower:toFront()
+
+local bgDirt=display.newImageRect(&quot;images/bg_dirt.png&quot;,1024,768)
+bgDirt.x=display.contentCenterX
+bgDirt.y=display.contentCenterY
+bgDirt:toBack()
+
+</code></pre></li>
+<li><p>Save and re-launch the project.  Your mole should be gone but also make sure you don&#39;t have any errors in the terminal window.</p>
+
+<p><img src="https://www.evernote.com/shard/s2/sh/6a6aa9c5-3de8-4afa-b529-4a8839a7d367/9dcb020496c6ef04e4dceaefe76c8c5a/deep/0/Screenshot%201/29/13%208:22%20PM.jpg" alt="No More Mole"></p></li>
+<li><p>Now open up <em>MoleGenerator.lua</em> in <strong>Notepad++</strong>(Win) or <strong>TextWrangler</strong>(Mac)</p></li>
+<li><p>MoleGenerator.lua is what is called a module or class.  To start a new module, add the following line to the top of the file:</p>
+
+<pre><code>module(..., package.seeall)
+</code></pre></li>
+<li><p>Now, we will create an object that represents our module.  To do that, add the following:</p>
+
+<pre><code>local MoleGenerator={}
+
+return MoleGenerator
+</code></pre></li>
+<li><p>So far, this is simple enough.  What will eventually happen is, we will include MoleGenerator.lua into our main.lua file.  main.lua will read the contents of MoleGenerator.lua and include whatever it returns.</p></li>
+<li><p>Now that we have our MoleGenerator object defined, we are going to add a function to it that actually creates a new mole for us.  In fact, that sounds like a great name for our function &quot;newMole&quot;.  Before the line <code>return MoleGenerator</code> add the following function:</p>
+
+<pre><code>function MoleGenerator.newMole()
+    local newMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+    newMole.x=display.contentCenterX
+    newMole.y=display.contentCenterY
+    return newMole
+end
+</code></pre></li>
+<li><p>This is just a super simple function to create our mole object and center him.  It probably looks very similar to the code you deleted in Step 5.  At this point, your MoleGenerator.lua file should look like this:</p>
+
+<pre><code>module(..., package.seeall)
+
+local MoleGenerator={}
+
+    function MoleGenerator.newMole()
+        local newMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+        newMole.x=display.contentCenterX
+        newMole.y=display.contentCenterY
+        return newMole
+    end
+
+return MoleGenerator
+</code></pre></li>
+<li><p>Switch back to the <code>main.lua</code> file and at the top, add the following lines:</p>
+
+<pre><code>local MoleGenerator=require(&quot;MoleGenerator&quot;)
+local myMole=MoleGenerator.newMole()
+</code></pre></li>
+<li><p>Save and re-launch your project and your friend the mole should be back.
+<img src="https://www.evernote.com/shard/s2/sh/98d2026b-c55b-4a9e-8b45-59b9ba1c022c/23d6f5dbe869a6b73142c4759aa1f840/deep/0/Screenshot%201/29/13%208:38%20PM.jpg" alt="Our Mole Buddy Is Back!"></p></li>
+<li><p>Alright, let&#39;s get that mole moving!</p></li>
+<li><p>The first thing we want to do is make the mole hidden when the game launches, so change his starting point from <code>newMole.y=display.contentCenterY</code> to <code>newMole.y=display.contentHeight</code>, this will put the mole&#39;s center point at the bottom of the screen (and hide him behind the grass in the front).  Hop over to MoleGenerator.lua and make that change on line 8.</p></li>
+<li><p>Save and re-launch the app and you shouldn&#39;t see your mole anymore (you also shouldn&#39;t see any errors in the terminal).</p></li>
+<li><p>Go back to MoleGenerator.lua.  We are going to take this slow and in chunks.  Let&#39;s start with just animating the mole coming out of the hole.  After the line <code>newMole.y=display.contentHeight</code>, add the following code:</p>
+
+<pre><code>--Configure how fast our mole will move
+local moleSpeed=5
+local distanceToTravel=newMole.y - display.contentCenterY
+local travelTime=distanceToTravel/(1/moleSpeed)
+</code></pre></li>
+<li><p>This block of code controls how fast our mole moves. The first line: <code>local moleSpeed=5</code> is just a value that I set the speed to initially.  I found this number by trial and error and seems to work pretty well.  </p></li>
+<li><p>The next line: <code>local distanceToTravel=newMole.y - display.contentCenterY</code>, measures how far the mole has to travel.  It subtracts the mole&#39;s destination (the center of the screen) from the current position (the bottom of the screen).  Remember, the bottom of the screen is the height of the device, so on an iPad device that is laid out sideways, the vertical height is 768 points.  This line is the equivalent of writing: <code>local distanceToTravel= 768 - 768/2</code>.  You might ask why we just don&#39;t write that, the reason is, if you move this code to a different device, those values might not work.  An iPhone 5 has a height of 640 points so the same values wouldn&#39;t work.</p></li>
+<li><p>Finally, the last line: <code>local travelTime=distanceToTravel/(1/moleSpeed)</code>, divides the distance by our speed. This object ends up being how long it should take our mole (in miliseconds) to travel to the center of the screen.  If we used values for the iPad, the math would like like this: <code>local travelTime=384/(1/5)</code> or <code>local travelTime=1920</code> (or 1.92 seconds)</p></li>
+<li><p>That is the most math you will need for this tutorial.  I use those three lines in a lot of my projects when I need to move objects around the screen at a constant rate.</p></li>
+<li><p>Okay, let&#39;s get this mole moving!  Below those three lines above, add the following code:</p>
+
+<pre><code>newMole.transition=transition.to(newMole,{
+                                                time=travelTime,
+                                                y=display.contentCenterY,
+
+                                            }
+                                    )                     
+</code></pre></li>
+<li><p>This code creates a <a href="http://docs.coronalabs.com/api/library/transition/to.html">transition object</a>. Transition objects move other objects around on the screen.  We use the command <code>transition.to</code> to create our transition object, and then we assign it to a property on our new mole called <code>.transition</code>.  Assigning the transition to a property will come in handy in the future.</p></li>
+<li><p>The <code>transition.to</code> command takes a few arguments. The first argument, is the object to move, which in our case is <code>newMole</code>.  The next argument is a lua table (signified with the open <code>{</code> and close <code>}</code> characters). This table includes a parameter named <code>time</code> which is how long the transition should take (we calculated that above in step 19.  The other argument is what you want to change about the object.  You can actually change multiple properties with the same transition command but for now, we just want to move it&#39;s <code>y</code> value to the center of the screen <code>display.contentCenterY</code>.</p></li>
+<li><p>Save and re-launch.  You should now see our little mole buddy pop his head up out of the ground.  </p>
+
+<p><img src="http://f.cl.ly/items/3x271Z2x3j1M2r3h3N0u/MoleWhack-Part2-vid1.m4v" alt="Mole Buddy Showing His Head Video"></p></li>
+<li><p>Just in case you had issues, here is what MoleGenerator.lua currently looks like:</p>
+
+<pre><code>module(..., package.seeall)
+
+local MoleGenerator={}
+
+    function MoleGenerator.newMole()
+        local newMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+        newMole.x=display.contentCenterX
+        newMole.y=display.contentHeight
+
+        --Configure how fast our mole will move
+        local moleSpeed=5
+        local distanceToTravel=newMole.y - display.contentCenterY
+        local travelTime=distanceToTravel/(1/moleSpeed)
+
+        newMole.transition=transition.to(newMole,{
+                                                    time=travelTime,
+                                                    y=display.contentCenterY,
+
+                                                }
+                                        )   
+
+        return newMole
+    end
+
+return MoleGenerator
+</code></pre></li>
+<li><p>Now we need to move the mole back down after he pokes his head up, otherwise he&#39;s going to get whacked all the time.  We are going to need to make some changes to our existing code.  First, we will want to put the the code that makes the mole move up into a function, so we can call it anytime we need it (and we will need it).</p></li>
+<li><p>To create the function, wrap the code in the following:</p>
+
+<pre><code>--a function to move the mole up
+local function moveMoleUp()
+    newMole.transition=transition.to(newMole,{
+                                                time=travelTime,
+                                                y=display.contentCenterY,
+                                            }
+                                    )   
+end
+</code></pre></li>
+<li><p>We are going to create an equivalent function to move the mole down.  I&#39;m going to create this above the function to move him up and I will explain why in the next step.  So above our &quot;moveMoleUp&quot; function, add the following code:</p>
+
+<pre><code>--a function to move the mole down
+local function moveMoleDown()
+    newMole.transition=transition.to(newMole,{
+                                                time=travelTime,
+                                                y=display.contentHeight
+                                            }
+                                    )
+end
+</code></pre></li>
+<li><p>This function creates a new transition object that is performed on <code>newMole</code> and sets newMole&#39;s y value to the bottom of the screen (also known as <code>display.contentHeight</code>)</p></li>
+<li><p>We have two functions in our code now, one to move the mole up and one to move it down.  If you think about the order of things:</p>
+
+<ol>
+<li>Start Game</li>
+<li>Mole is hidden</li>
+<li>Move mole up</li>
+<li>Mole is visible</li>
+<li>Move mole down</li>
+<li>Repeat steps 2-5</li>
+</ol></li>
+<li><p>We will call the moveMoleUp function first and then call the moveMoleDown function once the mole has been moved up.  But how do we know when the mole is visible?  There are two ways, first, we know how long the mole is going to be moving up (it&#39;s our variable <code>travelTime</code>), so we could call the moveMoleDown function after 2 seconds has passed.  And that would work okay.  But there is a better way.</p></li>
+<li><p>The <code>transition.to</code> accepts another parameter called <code>onComplete</code>.  This allows you to tell the transition to call a certain function when the transition is done.  If we use that new knowledge we can change the <code>function moveMoleUp</code> to the following:</p>
+
+<pre><code>--a function to move the mole up
+local function moveMoleUp()
+    newMole.transition=transition.to(newMole,{
+                                                time=travelTime,
+                                                y=display.contentCenterY,
+                                                onComplete=moveMoleDown
+                                            }
+                                    )   
+end
+</code></pre></li>
+<li><p>Now all we need to do is call our moveMoleUp function and when it completes, it will move the mole back down.  You can do this by adding the line <code>moveMoleUp()</code> after the end of the moveMoleUp function.  So our MoleGenerator.lua file looks like this:</p>
+
+<pre><code>module(..., package.seeall)
+
+local MoleGenerator={}
+
+    function MoleGenerator.newMole()
+        local newMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+        newMole.x=display.contentCenterX
+        newMole.y=display.contentHeight
+
+        --Configure how fast our mole will move
+        local moleSpeed=5
+        local distanceToTravel=newMole.y - display.contentCenterY
+        local travelTime=distanceToTravel/(1/moleSpeed)
+
+        --a function to move the mole down
+        local function moveMoleDown()
+            newMole.transition=transition.to(newMole,{
+                                                        time=travelTime,
+                                                        y=display.contentHeight
+                                                    }
+                                            )
+        end
+
+        --a function to move the mole up
+        local function moveMoleUp()
+            newMole.transition=transition.to(newMole,{
+                                                        time=travelTime,
+                                                        y=display.contentCenterY,
+                                                        onComplete=moveMoleDown
+                                                    }
+                                            )   
+        end
+
+        moveMoleUp()
+
+        return newMole
+    end
+
+return MoleGenerator
+</code></pre></li>
+<li><p>Save and re-launch.  Now our mole buddy is a little smarter.  He pops up and then ducks back down.  But that&#39;s it.  We want to repeat this behavior (and maybe randomize it a little).</p>
+
+<p><img src="http://f.cl.ly/items/2A1r0k0m2i3v2u162r3a/MoleWhack-Part2-vid2.m4v" alt="Up and Down Mole Video"></p></li>
+<li><p>We are going to create a new function to control when our mole pops up.  Comment out the line that reads <code>moveMoleUp()</code> (should be line 35 from above).</p></li>
+<li><p>Add the following function:</p>
+
+<pre><code>local function randomMoveMole()
+      local randomSeconds=math.random(1000,5000)
+      timer.performWithDelay(randomSeconds,moveMoleUp)
+end
+randomMoveMole()  
+</code></pre></li>
+<li><p>Let&#39;s talk about what this does.  The first line, <code>local function randomMoveMole()</code>, just declares our function, nothing new there.</p></li>
+<li><p>The next line, <code>local randomSeconds=math.random(1000,5000)</code>,  uses the <code>math.random</code> function to generate a random number between 1,000 and 5,000 (inclusive, inclusive means that it is possible for the function to generate a number equal to 1,000 or equal to 5,000).  Why are these numbers so big?  Because the next line takes a value in miliseconds and there are 1,000 miliseconds in a second, so 1,000ms=1 second.</p></li>
+<li><p>This line, <code>timer.performWithDelay(randomSeconds,moveMoleUp)</code>, creates a <a href="http://docs.coronalabs.com/api/library/timer/performWithDelay.html">timer object</a> that performs a function after a certain delay.  In our case, we are calling our <code>moveMoleUp</code> function after the delay.</p></li>
+<li><p>This line, <code>end</code> just closes our function from step 41.</p></li>
+<li><p>This line, <code>randomMoveMole()</code>, calls our new function and causes the mole to start to move after a random number of seconds (between 1 and 5 seconds, inclusive).</p></li>
+<li><p>This is great so far, but it will only happen once.  We need some way of calling our <code>randomMoveMole</code> function after the mole hides again. If only there was some argument or parameter we could send to do that after the mole moved down.  Hmmm… thoughts? ideas?  onComplete? Yes! Exactly!</p></li>
+<li><p>We need to change our <code>moveMoleDown</code> function.  But before we change it, it needs to know about our <code>randomMoveMole</code> function.  Lua reads from the top of the file to the bottom so when it reads the lines about our <code>moveMoleDown</code> function, it has no idea that <code>randomMoveMole</code> is further down.  To fix this, above our line that reads <code>local function moveMoleDown()</code> we need to add: <code>local randomMoveMole</code>:</p>
+
+<pre><code> local randomMoveMole
+--a function to move the mole down
+local function moveMoleDown()
+</code></pre></li>
+<li><p>Now lets add that onComplete parameter to our transition in the <code>moveMoleDown</code> function, (<strong>NOTE</strong> Don&#39;t forget to add a comma at the end of the line <code>y=display.contentHeight</code> to let lua know there is another parameter):</p>
+
+<pre><code>newMole.transition=transition.to(newMole,{
+                                                    time=travelTime,
+                                                    y=display.contentHeight,
+                                                     onComplete=randomMoveMole
+                                                }
+                                        )
+</code></pre></li>
+<li><p>And one last thing before we save, because we told lua about randomMoveMole above <code>moveMoleDown</code>, we don&#39;t need to call it local when we create the function, so go find the line that looks like this: <code>local function randomMoveMole()</code> and change it to this: <code>function randomMoveMole()</code></p></li>
+<li><p>Save and relaunch and your mole should be moving up and down at random intervals between 1 and 5 seconds.  If you are stuck, here is the code from MoleGenerator.lua:</p>
+
+<pre><code>module(..., package.seeall)
+
+local MoleGenerator={}
+
+    function MoleGenerator.newMole()
+        local newMole=display.newImageRect(&quot;images/mole_1.png&quot;,178,200)
+        newMole.x=display.contentCenterX
+        newMole.y=display.contentHeight
+
+        --Configure how fast our mole will move
+        local moleSpeed=5
+        local distanceToTravel=newMole.y - display.contentCenterY
+        local travelTime=distanceToTravel/(1/moleSpeed)
+
+        local randomMoveMole
+        --a function to move the mole down
+        local function moveMoleDown()
+            newMole.transition=transition.to(newMole,{
+                                                        time=travelTime,
+                                                        y=display.contentHeight,
+                                                        onComplete=randomMoveMole
+                                                    }
+                                            )
+        end
+
+        --a function to move the mole up
+        local function moveMoleUp()
+            newMole.transition=transition.to(newMole,{
+                                                        time=travelTime,
+                                                        y=display.contentCenterY,
+                                                        onComplete=moveMoleDown
+                                                    }
+                                            )   
+        end
+
+        function randomMoveMole()
+        local randomSeconds=math.random(1000,5000)
+        timer.performWithDelay(randomSeconds,moveMoleUp)
+        end
+        randomMoveMole() 
+
+        return newMole
+    end
+
+return MoleGenerator
+</code></pre></li>
+<li><p>For fun and feel good points, how do you think you would make the mole change the hole he came out of?  I will give some hints:</p>
+
+<ul>
+<li>It should be done in the <code>function randomMoveMole</code>.</li>
+<li>You will need to change the .x value of the newMole object.</li>
+</ul></li>
+</ol>
+
+<p>See you next time!</p>
+
+</body>
+</html>
